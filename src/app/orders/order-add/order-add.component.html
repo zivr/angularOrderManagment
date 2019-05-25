@@ -2,7 +2,19 @@
   <div class="card-body">
     <form [formGroup]="formGroup" novalidate>
       <div class="form-group">
-        <label class="col-md-4">Item name</label>
+          <label class="col-md-4">Customer</label>
+          <input type="text" class="form-control" formControlName="customer_name"
+          [ngbTypeahead]="searchCustomerByName"
+           #customer_name/>
+
+      </div>
+      <div *ngIf="getFormPropError('customer_name')" class="alert alert-danger">
+          <div *ngIf="getFormPropError('customer_name').required">
+            Each order has to be related to a customer.
+          </div>
+        </div>
+      <div class="form-group">
+        <label class="col-md-4">Name</label>
         <input type="text" class="form-control" formControlName="item_name" #item_name/>
       </div>
       <div *ngIf="getFormPropError('item_name')" class="alert alert-danger">
@@ -26,7 +38,7 @@
       <div class="form-group">
         <button type="submit" 
         [disabled]="formGroup.pristine || formGroup.invalid" 
-        (click)="addOrder(item_name.value, amount.value, description.value)"
+        (click)="addOrder(item_name.value, amount.value, description.value, customer_name.value)"
         class="btn btn-primary">Add Order</button>
       </div>
     </form>

@@ -15,7 +15,8 @@ export class OrderService {
     return this.http.post(`${this.baseUri}/new`, {
       name: order.name,
       amount: order.amount,
-      description: order.description
+      description: order.description,
+      customer: order.customer._id
     });
   }
 

@@ -30,7 +30,7 @@ export class OrderListComponent implements OnInit {
       this.orders = data;
     });
   }
-  openModal(content: any, order: Order) {
+  openModal(order: Order) {
     const modalRef = this.modalService.open(OrderEditComponent);
     modalRef.componentInstance.order = order;
   }

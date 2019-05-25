@@ -8,17 +8,25 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { OrderAddComponent } from './order-add/order-add.component';
-import { OrderListComponent } from './order-list/order-list.component';
-import { OrderEditComponent } from './order-edit/order-edit.component';
-import { OrderService } from './order.service';
+import { OrderAddComponent } from './orders/order-add/order-add.component';
+import { OrderListComponent } from './orders/order-list/order-list.component';
+import { OrderEditComponent } from './orders/order-edit/order-edit.component';
+import { OrderService } from './orders/order.service';
+import { CustomerAddComponent } from './customers/customer-add/customer-add.component';
+import { CustomerListComponent } from './customers/customer-list/customer-list.component';
+import { CustomerEditComponent } from './customers/customer-edit/customer-edit.component';
+import { CustomerTypeNamePipe } from './customers/customer-type-name.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     OrderAddComponent,
     OrderListComponent,
-    OrderEditComponent
+    OrderEditComponent,
+    CustomerAddComponent,
+    CustomerListComponent,
+    CustomerEditComponent,
+    CustomerTypeNamePipe
   ],
   imports: [
     BrowserModule,
@@ -29,6 +37,10 @@ import { OrderService } from './order.service';
     NgbModule
   ],
   providers: [OrderService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [
+    OrderEditComponent,
+    CustomerEditComponent
+  ],
 })
 export class AppModule { }

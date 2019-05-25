@@ -1,15 +1,14 @@
 const Routers = require('../routers');
-const Orders = require('../db/orders');
-const error = require('debug')('routes:error');
 const Customers = require('../db/customers');
+const error = require('debug')('routes:error');
 
-class OrdersRoute extends Routers {
+class CustomersRoute extends Routers {
     constructor() {
         super();
 
         this.apiRouter.post('/new', (req, res) => {
-            const ordersModel = new Orders(req.body);
-            ordersModel.save().then(orders => {
+            const customersModel = new Customers(req.body);
+            customersModel.save().then(customers => {
                 res.status(200).json({ success: true });
             }).catch(err => {
                 res.status(400).send({ success: false, err });
@@ -17,24 +16,24 @@ class OrdersRoute extends Routers {
         });
 
         this.apiRouter.get('/', (req, res) => {
-            Promise.all([Orders.find().exec(), Customers.find().exec()]).then(([orders, customers]) => {
-                orders.forEach(order => {
-                    order.customer = customers.find(c => c._id.toString() === order.customer.toString())
-                })
-                res.json(orders);
+            Customers.find((err, customers) => {
+                if (err) {
+                    error(err);
+                } else {
+                    res.json(customers);
+                }
             });
         });
 
         this.apiRouter.post('/:id', (req, res) => {
-            Orders.findById(req.params.id, (err, orders) => {
-                if (!orders)
+            Customers.findById(req.params.id, (err, customers) => {
+                if (!customers)
                     return res.json({ success: false, msg: 'Could not load Document' });
                 else {
-                    orders.name = req.body.name;
-                    orders.description = req.body.description;
-                    orders.amount = req.body.amount;
+                    customers.name = req.body.name;
+                    customers.type = req.body.type;
 
-                    orders.save().then(() => {
+                    customers.save().then(() => {
                         res.json({ success: true });
                     }).catch(err => {
                         res.status(400).send({ success: false, err });
@@ -44,7 +43,7 @@ class OrdersRoute extends Routers {
         });
 
         this.apiRouter.delete('/:id', (req, res) => {
-            Orders.findByIdAndRemove({ _id: req.params.id }, (err) => {
+            Customers.findByIdAndRemove({ _id: req.params.id }, (err) => {
                 if (err) {
                     res.json({ success: false, err });
                 } else {
@@ -55,4 +54,4 @@ class OrdersRoute extends Routers {
     }
 }
 
-module.exports = OrdersRoute;
+module.exports = CustomersRoute;

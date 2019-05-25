@@ -14,7 +14,6 @@ export class OrderEditComponent implements OnInit {
 
   @Input() order: Order;
   formGroup: FormGroup;
-  test = 'test'
 
   constructor(public activeModal: NgbActiveModal, private fb: FormBuilder, private os: OrderService) { 
     this.createForm();
