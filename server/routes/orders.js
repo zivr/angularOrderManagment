@@ -8,7 +8,7 @@ class OrdersRoute extends Routers {
         super();
 
         this.apiRouter.post('/new', (req, res) => {
-            const ordersModel = new Orders(req.body);
+            const ordersModel = new Orders(Object.assign({}, req.body, { date: Date.now() }));
             ordersModel.save().then(orders => {
                 res.status(200).json({ success: true });
             }).catch(err => {
@@ -52,6 +52,25 @@ class OrdersRoute extends Routers {
                 }
             });
         });
+
+        this.apiRouter.get('/countByDate/:from/:to', (req, res) => {
+            const dateFrom = new Date(parseInt(req.params.from));
+            const dateTo = new Date(parseInt(req.params.to));
+            console.log('from ', dateFrom, 'to', dateTo);
+            const ordersCountPromise = Orders.aggregate([
+                { $match : { date : { $gte: dateFrom, $lte: dateTo  } } },
+                {$group: { 
+                    _id: "$customer", 
+                    count: { $sum: 1 }}},
+            ]).exec();
+            const customersPromise = Customers.find().exec()
+            Promise.all([ordersCountPromise, customersPromise]).then(([orders, customers]) => {
+                orders.forEach(order => {
+                    order.customer = customers.find(c => c._id.toString() === order._id.toString()).name
+                })
+                res.json(orders);
+            });
+        })
     }
 }
 

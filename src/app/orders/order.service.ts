@@ -31,4 +31,8 @@ export class OrderService {
   upateOrder(order: Order) {
     return this.http.post(`${this.baseUri}/${order._id}`, order);
   }
+
+  getOrdersDashboard(from: Date, to: Date) {
+    return this.http.get(`${this.baseUri}/countByDate/${from.getTime()}/${to.getTime()}`);
+  }
 }

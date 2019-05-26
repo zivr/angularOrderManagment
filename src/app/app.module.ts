@@ -5,6 +5,7 @@ import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +17,7 @@ import { CustomerAddComponent } from './customers/customer-add/customer-add.comp
 import { CustomerListComponent } from './customers/customer-list/customer-list.component';
 import { CustomerEditComponent } from './customers/customer-edit/customer-edit.component';
 import { CustomerTypeNamePipe } from './customers/customer-type-name.pipe';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { CustomerTypeNamePipe } from './customers/customer-type-name.pipe';
     CustomerAddComponent,
     CustomerListComponent,
     CustomerEditComponent,
-    CustomerTypeNamePipe
+    CustomerTypeNamePipe,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +37,8 @@ import { CustomerTypeNamePipe } from './customers/customer-type-name.pipe';
     SlimLoadingBarModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
+    ChartsModule
   ],
   providers: [OrderService],
   bootstrap: [AppComponent],

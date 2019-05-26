@@ -4,8 +4,13 @@ import { OrderAddComponent } from './orders/order-add/order-add.component';
 import { OrderListComponent } from './orders/order-list/order-list.component';
 import { CustomerAddComponent } from './customers/customer-add/customer-add.component';
 import { CustomerListComponent } from './customers/customer-list/customer-list.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    component: DashboardComponent
+  },
   {
     path: 'customers/create',
     component: CustomerAddComponent
