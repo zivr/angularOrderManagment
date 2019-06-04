@@ -1,12 +1,13 @@
 const Routers = require('../routers');
 const Customers = require('../db/customers');
 const error = require('debug')('routes:error');
+const { allowAdminOnly } = require('../middlewares/security');
 
 class CustomersRoute extends Routers {
     constructor() {
         super();
 
-        this.apiRouter.post('/new', (req, res) => {
+        this.apiRouter.post('/new', allowAdminOnly, (req, res) => {
             const customersModel = new Customers(req.body);
             customersModel.save().then(customers => {
                 res.status(200).json({ success: true });
@@ -15,7 +16,7 @@ class CustomersRoute extends Routers {
             });
         });
 
-        this.apiRouter.get('/', (req, res) => {
+        this.apiRouter.get('/', allowAdminOnly, (req, res) => {
             Customers.find((err, customers) => {
                 if (err) {
                     error(err);
@@ -25,7 +26,7 @@ class CustomersRoute extends Routers {
             });
         });
 
-        this.apiRouter.post('/:id', (req, res) => {
+        this.apiRouter.post('/:id', allowAdminOnly, (req, res) => {
             Customers.findById(req.params.id, (err, customers) => {
                 if (!customers)
                     return res.json({ success: false, msg: 'Could not load Document' });
@@ -42,7 +43,7 @@ class CustomersRoute extends Routers {
             });
         });
 
-        this.apiRouter.delete('/:id', (req, res) => {
+        this.apiRouter.delete('/:id', allowAdminOnly, (req, res) => {
             Customers.findByIdAndRemove({ _id: req.params.id }, (err) => {
                 if (err) {
                     res.json({ success: false, err });

@@ -20,6 +20,15 @@
       </li>
     </ul>
   </div>
+  <div
+    triggers="click" [autoClose]="'outside'" 
+    placement="bottom" [ngbTooltip]="userContent"
+    class="dropdown-toggle" *ngIf="currentUser">
+    Welcome, {{currentUser.username}} <span class="caret"></span>
+  </div>
+  <ng-template #userContent>
+    <div (click)="us.logout()" class="logout">Logout!</div>
+  </ng-template>
 </nav>
 
 <div class="container">

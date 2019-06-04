@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChartsModule } from 'ng2-charts';
 
@@ -18,6 +18,9 @@ import { CustomerListComponent } from './customers/customer-list/customer-list.c
 import { CustomerEditComponent } from './customers/customer-edit/customer-edit.component';
 import { CustomerTypeNamePipe } from './customers/customer-type-name.pipe';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { LoginComponent } from './login/login.component';
+import { ErrorInterceptor } from './utils/error.interceptor';
+import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     CustomerListComponent,
     CustomerEditComponent,
     CustomerTypeNamePipe,
-    DashboardComponent
+    DashboardComponent,
+    LoginComponent,
+    UnauthorizedComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +45,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     NgbModule,
     ChartsModule
   ],
-  providers: [OrderService],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    OrderService,
+  ],
   bootstrap: [AppComponent],
   entryComponents: [
     OrderEditComponent,

@@ -2,6 +2,7 @@ const Routers = require('../routers');
 const Orders = require('../db/orders');
 const error = require('debug')('routes:error');
 const Customers = require('../db/customers');
+const uaa = require('../middlewares/uaa');
 
 class OrdersRoute extends Routers {
     constructor() {
@@ -17,7 +18,12 @@ class OrdersRoute extends Routers {
         });
 
         this.apiRouter.get('/', (req, res) => {
-            Promise.all([Orders.find().exec(), Customers.find().exec()]).then(([orders, customers]) => {
+            const ordersFilter = {};
+            const user = uaa.getCurrentUser(req);
+            if (user && !user.isAdmin) {
+                ordersFilter.customer = user.id;
+            }
+            Promise.all([Orders.find(ordersFilter).exec(), Customers.find().exec()]).then(([orders, customers]) => {
                 orders.forEach(order => {
                     order.customer = customers.find(c => c._id.toString() === order.customer.toString())
                 })
@@ -56,7 +62,6 @@ class OrdersRoute extends Routers {
         this.apiRouter.get('/countByDate/:from/:to', (req, res) => {
             const dateFrom = new Date(parseInt(req.params.from));
             const dateTo = new Date(parseInt(req.params.to));
-            console.log('from ', dateFrom, 'to', dateTo);
             const ordersCountPromise = Orders.aggregate([
                 { $match : { date : { $gte: dateFrom, $lte: dateTo  } } },
                 {$group: { 

@@ -4,7 +4,8 @@ const debug = require('debug')('server:debug');
 const error = require('debug')('server:error');
 const requireDir = require('require-dir');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
+const uaa = require('./middlewares/uaa');
+const security = require('./middlewares/security');
 
 class Server {
     get hostname() {
@@ -27,13 +28,14 @@ class Server {
     }
 
     _initAuthentication() {
+        this.uaa = uaa;
+        this.app.use(this.uaa.authRouter);
+        //The express server only serve api request so we will block all request and make sure the user is authenticated
+        this.app.use(security.allowOnlyAuthenticated); 
     }
 
     _initMiddlewares() {
         this.app.use(cookieParser());
-        this.app.use(bodyParser.json());
-        // this.app.use(security); We don't need security for a POC.
-        // this.app.use(compression({})); We don't need to think about compression in a POC.
     }
 
     _initVariables() {

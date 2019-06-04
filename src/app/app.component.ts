@@ -6,6 +6,8 @@ import { NavigationCancel,
         NavigationError,
         NavigationStart,
         Router } from '@angular/router';
+import { UserService } from './user/user.service';
+import { User } from './user/User';
 
 
 @Component({
@@ -14,7 +16,10 @@ import { NavigationCancel,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  constructor(private _loadingBar: SlimLoadingBarService, private _router: Router) {
+  get currentUser (): User {
+    return this.us.user;
+  }
+  constructor(private _loadingBar: SlimLoadingBarService, private _router: Router, private us: UserService) {
     this._router.events.subscribe((event: Event) => {
       this.navigationInterceptor(event);
     });
