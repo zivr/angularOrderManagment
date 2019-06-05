@@ -29,7 +29,6 @@ class OrdersRoute extends Routers {
                     res.status(400).json({ success: false, message: 'You have reached the maximum amount of orders' });
                     return;
                 }
-                console.log(req.body);
                 const ordersModel = new Orders(Object.assign({}, req.body, { date: Date.now() }));
                 ordersModel.save().then(orders => {
                     res.status(200).json({ success: true });
