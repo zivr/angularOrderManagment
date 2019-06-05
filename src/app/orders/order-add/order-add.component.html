@@ -2,20 +2,18 @@
   <div class="card-body">
     <form [formGroup]="formGroup" novalidate>
       <div class="form-group">
-          <label class="col-md-4">Customer</label>
-          <input type="text" class="form-control" formControlName="customer_name"
-          [ngbTypeahead]="searchCustomerByName"
-           #customer_name/>
-
+        <label class="col-md-4">Customer</label>
+        <input type="text" class="form-control" formControlName="customer_name" [ngbTypeahead]="searchCustomerByName"
+          [attr.disabled]="!currentUser?.isAdmin == true ? true : null" #customer_name />
       </div>
       <div *ngIf="getFormPropError('customer_name')" class="alert alert-danger">
-          <div *ngIf="getFormPropError('customer_name').required">
-            Each order has to be related to a customer.
-          </div>
+        <div *ngIf="getFormPropError('customer_name').required">
+          Each order has to be related to a customer.
         </div>
+      </div>
       <div class="form-group">
         <label class="col-md-4">Name</label>
-        <input type="text" class="form-control" formControlName="item_name" #item_name/>
+        <input type="text" class="form-control" formControlName="item_name" #item_name />
       </div>
       <div *ngIf="getFormPropError('item_name')" class="alert alert-danger">
         <div *ngIf="getFormPropError('item_name').required">
@@ -24,23 +22,25 @@
       </div>
       <div class="form-group">
         <label class="col-md-4">Amount</label>
-        <input type="number" class="form-control" formControlName="amount" min="1" #amount/>
+        <input type="number" class="form-control" formControlName="amount" min="1" #amount />
       </div>
       <div *ngIf="getFormPropError('amount')" class="alert alert-danger">
-          <div *ngIf="getFormPropError('amount').required">
-            Please select how many items you like to order.
-          </div>
+        <div *ngIf="getFormPropError('amount').required">
+          Please select how many items you like to order.
         </div>
+      </div>
       <div class="form-group">
         <label class="col-md-4">Additional information</label>
-        <input type="text" class="form-control" formControlName="description" #description/>
+        <input type="text" class="form-control" formControlName="description" #description />
       </div>
       <div class="form-group">
-        <button type="submit" 
-        [disabled]="formGroup.pristine || formGroup.invalid" 
-        (click)="addOrder(item_name.value, amount.value, description.value, customer_name.value)"
-        class="btn btn-primary">Add Order</button>
+        <button type="submit" [disabled]="formGroup.pristine || formGroup.invalid"
+          (click)="addOrder(item_name.value, amount.value, description.value, customer_name.value)"
+          class="btn btn-primary">Add Order</button>
       </div>
+      <div *ngIf="formSubmitErrorMessage" class="alert alert-danger">
+          {{formSubmitErrorMessage}}
+      </div>      
     </form>
   </div>
 </div>

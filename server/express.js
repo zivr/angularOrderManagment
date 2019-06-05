@@ -36,6 +36,7 @@ class Server {
 
     _initMiddlewares() {
         this.app.use(cookieParser());
+        this.app.use(Express.json());
     }
 
     _initVariables() {

@@ -1,5 +1,4 @@
-// process.env.NODE_ENV = 'production';
-process.env.DEBUG = '*';
+require('dotenv').config({ path: 'server/.env' });
 
 const path = require('path');
 const Express = require('express');

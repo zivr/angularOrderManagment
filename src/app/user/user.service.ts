@@ -18,7 +18,7 @@ export class UserService {
       if (!data.success) {
         return null;
       }
-      this.user = new User(data.user.username);
+      this.user = new User(data.user.username, data.user.isAdmin);
       return this.user;
     }));
   }
@@ -27,5 +27,15 @@ export class UserService {
     this.http.get(`/api/logout`).subscribe(() => {
       this.router.navigateByUrl('/login');
     });
+  }
+  fetchUserInfo() {
+    return this.http.get(`/api/userInfo`)
+    .pipe(map((data: any) => {
+      if (!data.success) {
+        return null;
+      }
+      this.user = new User(data.user.username, data.user.isAdmin);
+      return this.user;
+    }));
   }
 }

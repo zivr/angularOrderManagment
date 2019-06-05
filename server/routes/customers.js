@@ -2,6 +2,7 @@ const Routers = require('../routers');
 const Customers = require('../db/customers');
 const error = require('debug')('routes:error');
 const { allowAdminOnly } = require('../middlewares/security');
+const uaa = require('../middlewares/uaa');
 
 class CustomersRoute extends Routers {
     constructor() {
@@ -16,8 +17,13 @@ class CustomersRoute extends Routers {
             });
         });
 
-        this.apiRouter.get('/', allowAdminOnly, (req, res) => {
-            Customers.find((err, customers) => {
+        this.apiRouter.get('/', (req, res) => {
+            const filter = {};
+            const user = uaa.getCurrentUser(req);
+            if (user && !user.isAdmin) {
+                filter._id = user.id;
+            }
+            Customers.find(filter, (err, customers) => {
                 if (err) {
                     error(err);
                 } else {

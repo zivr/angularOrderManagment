@@ -36,10 +36,7 @@ class Uaa {
                 } else {
                     req.session.authenticated = true;
                     req.session.customer = customer;
-                    const user = new User(customer);
-                    res.json({success: true, user: {
-                        username: user.username
-                    }});
+                    res.json({success: true, user: this.getCurrentUserInfo(req)});
                 }
             });
         });
@@ -47,13 +44,31 @@ class Uaa {
             req.session.authenticated = false;
             res.json({success: true});
         });
+        this.authRouter.get('/api/userInfo', (req, res) => {
+            const user = this.getCurrentUserInfo(req);
+            res.json({success: !!user, user});
+        });
 
         // this.authRouter.get('/forgot_password', (req, res) => {});
         // this.authRouter.get('/refresh_token', (req, res) => {});
     }
 
     getCurrentUser(req) {
+        if (!req.session.customer) {
+            return null;
+        }
         return new User(req.session.customer);
+    }
+
+    getCurrentUserInfo(req) {
+        const user = this.getCurrentUser(req);
+        if (!user) {
+            return null;
+        }
+        return {
+            username: user.username,
+            isAdmin: user.isAdmin
+        };
     }
 }
 //This will remain singleton as long as we make sure we don't break the node cached object.

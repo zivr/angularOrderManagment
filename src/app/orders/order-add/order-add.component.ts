@@ -7,6 +7,8 @@ import { CustomerService } from '../../customers/customer.service';
 import { Customer } from '../../customers/Customer';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { UserService } from 'src/app/user/user.service';
+import { User } from 'src/app/user/User';
 
 @Component({
   selector: 'app-order-add',
@@ -17,10 +19,15 @@ export class OrderAddComponent implements OnInit {
 
   formGroup: FormGroup;
   customers: Customer[] = [];
+  formSubmitErrorMessage: string;
 
-  constructor(private fb: FormBuilder, private os: OrderService, private router: Router, private cs: CustomerService) {
+  get currentUser(): User {
+    return this.us.user;
+  }
+
+  constructor(private fb: FormBuilder, private os: OrderService, private router: Router,
+    private cs: CustomerService, private us: UserService) {
     this.createForm();
-    this.fetchCustomers();
   }
 
   createForm() {
@@ -41,9 +48,14 @@ export class OrderAddComponent implements OnInit {
   addOrder(name, amount, description, customerName) {
     const customer = this.customers.find(c => c.name === customerName);
     const order = new Order({ name, amount, description, customer });
-    this.os.addOrder(order).subscribe(() => {
-      this.router.navigateByUrl('/orders');
-    });
+    this.os.addOrder(order).subscribe(
+      () => {
+        this.router.navigateByUrl('/orders');
+      },
+      error => {
+        this.formSubmitErrorMessage = error;
+        return error;
+      });
   }
 
   fetchCustomers() {
@@ -53,6 +65,10 @@ export class OrderAddComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.currentUser && !this.currentUser.isAdmin) {
+      this.formGroup.get('customer_name').setValue(this.us.user.username);
+    }
+    this.fetchCustomers();
   }
 
   searchCustomerByName = (text$: Observable<string>) => {

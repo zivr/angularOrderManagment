@@ -3,17 +3,39 @@ const Orders = require('../db/orders');
 const error = require('debug')('routes:error');
 const Customers = require('../db/customers');
 const uaa = require('../middlewares/uaa');
+const Mongoose = require('mongoose');
 
 class OrdersRoute extends Routers {
     constructor() {
         super();
-
+        
         this.apiRouter.post('/new', (req, res) => {
-            const ordersModel = new Orders(Object.assign({}, req.body, { date: Date.now() }));
-            ordersModel.save().then(orders => {
-                res.status(200).json({ success: true });
-            }).catch(err => {
-                res.status(400).send({ success: false, err });
+            const user = uaa.getCurrentUser(req);
+            if (!user) {
+                res.status(400).json({ success: false, message: 'can\'t find user' });
+                return;
+            }
+            const getOrderPromise = user.isAdmin ? Promise.resolve([{ count: 0}]) : Orders.aggregate([
+                { $match: { customer: new Mongoose.Types.ObjectId(user.id) } },
+                {
+                    $group: {
+                        _id: "$customer",
+                        count: { $sum: 1 }
+                    }
+                },
+            ]).exec();
+            getOrderPromise.then((orders) => {
+                if (orders.length && orders[0].count >= process.env.CUSTOMER_MAX_ORDERS) {
+                    res.status(400).json({ success: false, message: 'You have reached the maximum amount of orders' });
+                    return;
+                }
+                console.log(req.body);
+                const ordersModel = new Orders(Object.assign({}, req.body, { date: Date.now() }));
+                ordersModel.save().then(orders => {
+                    res.status(200).json({ success: true });
+                }).catch(err => {
+                    res.status(400).send({ success: false, err });
+                });
             });
         });
 
@@ -63,10 +85,13 @@ class OrdersRoute extends Routers {
             const dateFrom = new Date(parseInt(req.params.from));
             const dateTo = new Date(parseInt(req.params.to));
             const ordersCountPromise = Orders.aggregate([
-                { $match : { date : { $gte: dateFrom, $lte: dateTo  } } },
-                {$group: { 
-                    _id: "$customer", 
-                    count: { $sum: 1 }}},
+                { $match: { date: { $gte: dateFrom, $lte: dateTo } } },
+                {
+                    $group: {
+                        _id: "$customer",
+                        count: { $sum: 1 }
+                    }
+                },
             ]).exec();
             const customersPromise = Customers.find().exec()
             Promise.all([ordersCountPromise, customersPromise]).then(([orders, customers]) => {

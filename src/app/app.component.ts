@@ -24,6 +24,9 @@ export class AppComponent {
       this.navigationInterceptor(event);
     });
   }
+  ngOnInit() {
+    this.us.fetchUserInfo().subscribe();
+  }
   private navigationInterceptor(event: Event): void {
     if (event instanceof NavigationStart) {
       this._loadingBar.start();

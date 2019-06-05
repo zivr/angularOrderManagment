@@ -14,5 +14,5 @@ module.exports.allowOnlyAuthenticated = (req, res, next) => {
         next();
         return;
     }
-    res.status(401).send({ success: false, message: 'only admin user are allowed' });
+    res.status(401).send({ success: false, message: 'only authenticated user are allowed' });
 }
