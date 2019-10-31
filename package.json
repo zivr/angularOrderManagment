@@ -29,7 +29,7 @@
     "dotenv": "^8.0.0",
     "express": "^4.17.0",
     "express-session": "^1.16.1",
-    "mongoose": "^5.5.10",
+    "mongoose": "^5.7.5",
     "ng2-charts": "^2.2.3",
     "ng2-slim-loading-bar": "^4.0.0",
     "require-dir": "^1.2.0",
